@@ -2,7 +2,7 @@ import time
 import random
 import networkx as nx
 
-def ant_colony_optimization(graph, edge_weight, num_ants=10, alpha=1, beta=2, evaporation_rate=0.5, pheromone_constant=1, time_limit=10):
+def ant_colony_optimization(graph, edge_weight, guides='weight', num_ants=10, alpha=1, beta=2, evaporation_rate=0.5, pheromone_constant=1, time_limit=10):
     # Initialize pheromone levels on each edge
     pheromone_levels = {}
     for u, v in graph.edges():
