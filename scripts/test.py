@@ -16,7 +16,7 @@ import tqdm.auto as tqdm
 
 import gnngls
 from gnngls import algorithms, models, datasets
-from gnngls.aco_ga import aco_search_with_regret
+from gnngls.aco_ga import ant_colony_optimization
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Test model')
@@ -92,8 +92,8 @@ if __name__ == '__main__':
         init_cost = gnngls.tour_cost(G, init_tour)
 
         # Use guided local search to find the best tour
-        best_tour, best_cost = aco_search_with_regret(G,
-                                                                         weight='weight',
+        best_tour, best_cost = ant_colony_optimization(G,
+                                                                         weight='regret_pred',
                                                                         guides=args.guides)
 
         """ for row in search_progress_i:
