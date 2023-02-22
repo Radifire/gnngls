@@ -2,7 +2,7 @@ import time
 import random
 import networkx as nx
 
-def ant_colony_optimization(graph, edge_weight, guides='weight', num_ants=10, alpha=1, beta=2, evaporation_rate=0.5, pheromone_constant=1, time_limit=10):
+def ant_colony_optimization(graph, weight='regret_pred', guides='weight', num_ants=10, alpha=1, beta=2, evaporation_rate=0.5, pheromone_constant=1, time_limit=10):
     # Initialize pheromone levels on each edge
     pheromone_levels = {}
     for u, v in graph.edges():
@@ -21,6 +21,7 @@ def ant_colony_optimization(graph, edge_weight, guides='weight', num_ants=10, al
         ants = [random.choice(list(graph.nodes())) for _ in range(num_ants)]
         
         # Initialize visited nodes for each ant
+        ant_distances = {ant: 0 for ant in ants}
         ant_visited = {ant: set([ant]) for ant in ants}
         
         # Move each ant to a new node based on the pheromone levels and edge weights
@@ -33,7 +34,7 @@ def ant_colony_optimization(graph, edge_weight, guides='weight', num_ants=10, al
                 ant_probabilities = {}
                 denominator = 0
                 for neighbor in unvisited_neighbors[ant]:
-                    edge_weight_value = graph[current_node][neighbor][edge_weight]
+                    edge_weight_value = graph[current_node][neighbor][weight]
                     pheromone_level = pheromone_levels[(current_node, neighbor)]
                     numerator = pheromone_level ** alpha * (1/edge_weight_value) ** beta
                     denominator += numerator
@@ -59,7 +60,7 @@ def ant_colony_optimization(graph, edge_weight, guides='weight', num_ants=10, al
         iteration_best_tour = None
         iteration_best_tour_length = float('inf')
         for ant in ants:
-            tour_length = ant_distances[ant] + graph[ant_visited[ant][-1]][ant_visited[ant][0]][edge_weight]
+            tour_length = ant_distances[ant] + graph[ant_visited[ant][-1]][ant_visited[ant][0]][weight]
             if tour_length < iteration_best_tour_length:
                 iteration_best_tour = list(ant_visited[ant])
                 iteration_best_tour_length = tour_length
