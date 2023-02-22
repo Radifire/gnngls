@@ -92,16 +92,16 @@ if __name__ == '__main__':
         init_cost = gnngls.tour_cost(G, init_tour)
 
         # Use guided local search to find the best tour
-        best_tour, best_cost, search_progress_i = aco_search_with_regret(G,
+        best_tour, best_cost = aco_search_with_regret(G,
                                                                          weight='weight',
                                                                         guides=args.guides)
 
-        for row in search_progress_i:
+        """ for row in search_progress_i:
             row.update({
                 'instance': instance,
                 'opt_cost': opt_cost
             })
-            search_progress.append(row)
+            search_progress.append(row) """
 
         gap = (best_cost / opt_cost - 1) * 100
         gaps.append(gap)
