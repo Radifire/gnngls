@@ -22,12 +22,12 @@ def ant_colony_optimization(graph, weight='regret_pred', guides='weight', num_an
         
         # Initialize visited nodes for each ant
         ant_distances = {ant: 0 for ant in ants}
-        ant_visited = {ant: set([ant]) for ant in ants}
+        ant_visited = {ant: [ant] for ant in ants}
         
         # Move each ant to a new node based on the pheromone levels and edge weights
         for _ in range(graph.number_of_nodes()-1):
             # Calculate the probability of moving to each neighboring node for each ant in parallel
-            unvisited_neighbors = [set(graph.neighbors(ant)) - ant_visited[ant] for ant in ants]
+            unvisited_neighbors = [set(graph.neighbors(ant)) - set(ant_visited[ant]) for ant in ants]
             probabilities = []
             for ant in ants:
                 current_node = ant_visited[ant][-1]
@@ -46,7 +46,10 @@ def ant_colony_optimization(graph, weight='regret_pred', guides='weight', num_an
             # Select a neighbor to move to for each ant in parallel based on the probabilities
             selected_neighbors = [random.choices(list(prob.keys()), list(prob.values()))[0] for prob in probabilities]
             for ant, neighbor in zip(ants, selected_neighbors):
-                ant_visited[ant].add(neighbor)
+                ant_visited[ant].append(neighbor)
+                
+                # Update the distance traveled by the ant
+                ant_distances[ant] += graph[ant_visited[ant][-2]][neighbor][weight]
                 
         # Update the pheromone levels on each edge based on the distances traveled by each ant
         for u, v in graph.edges():
