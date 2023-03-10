@@ -145,6 +145,7 @@ def guided_local_search(G, init_tour, init_cost, t_lim, weight='weight', guides=
 
     iter_i = 0
     while time.time() < t_lim:
+        depot = cur_tour[0]
         guide = guides[iter_i % len(guides)]  # option change guide ever iteration (as in KGLS)
 
         # perturbation
@@ -166,7 +167,7 @@ def guided_local_search(G, init_tour, init_cost, t_lim, weight='weight', guides=
 
             # apply operator to edge
             for n in max_util_e:
-                if n != 0:  # not the depot
+                if n != depot:  # not the depot
                     i = cur_tour.index(n)
 
                     for operator in [operators.two_opt_o2a, operators.relocate_o2a]:
@@ -194,6 +195,8 @@ def guided_local_search(G, init_tour, init_cost, t_lim, weight='weight', guides=
             cur_tour = nearest_neighbor(G, loc, 'weight')
             cur_cost = tour_cost(G, cur_tour, 'weight')
         else:
-                cur_tour, cur_cost = result_tour, result_cost
+            if result_cost < best_cost:
+                best_tour, best_cost = result_tour, result_cost
+            cur_tour, cur_cost = result_tour, result_cost
 
     return best_tour, best_cost, search_progress
