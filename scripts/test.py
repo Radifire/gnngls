@@ -26,7 +26,7 @@ if __name__ == '__main__':
     parser.add_argument('--time_limit', type=float, default=10.)
     parser.add_argument('--perturbation_moves', type=int, default=20)
     parser.add_argument('--use_gpu', action='store_true')
-    parser.add_argument('test', action='store_true')
+    parser.add_argument('--test', action='store_true')
     args = parser.parse_args()
 
     params = json.load(open(args.model_path.parent / 'params.json'))
