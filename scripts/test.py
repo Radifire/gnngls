@@ -16,7 +16,6 @@ import tqdm.auto as tqdm
 
 import gnngls
 from gnngls import algorithms, models, datasets
-from gnngls.aco_ga import ant_colony_optimization
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Test model')
@@ -27,6 +26,7 @@ if __name__ == '__main__':
     parser.add_argument('--time_limit', type=float, default=10.)
     parser.add_argument('--perturbation_moves', type=int, default=20)
     parser.add_argument('--use_gpu', action='store_true')
+    parser.add_argument('test', action='store_true')
     args = parser.parse_args()
 
     params = json.load(open(args.model_path.parent / 'params.json'))
@@ -92,17 +92,20 @@ if __name__ == '__main__':
         init_cost = gnngls.tour_cost(G, init_tour)
 
         # Use guided local search to find the best tour
-        best_tour, best_cost = ant_colony_optimization(G,
-                                                                         weight='regret_pred',
-                                                                        guides=args.guides)
+        best_tour, best_cost, search_progress_i = algorithms.guided_local_search(G, init_tour, init_cost,
+                                                                                 t + args.time_limit, weight='weight',
+                                                                                 guides=args.guides,
+                                                                                 perturbation_moves=args.perturbation_moves,
+                                                                                 test=args.test,
+                                                                                 first_improvement=False)
 
-        """ for row in search_progress_i:
+        for row in search_progress_i:
             row.update({
                 'instance': instance,
                 'opt_cost': opt_cost
             })
-            search_progress.append(row) """
-
+            search_progress.append(row)
+        
         gap = (best_cost / opt_cost - 1) * 100
         gaps.append(gap)
         pbar.set_postfix({

@@ -133,7 +133,7 @@ def local_search(init_tour, init_cost, D, first_improvement=False):
     return cur_tour, cur_cost, search_progress
 
 
-def guided_local_search(G, init_tour, init_cost, t_lim, weight='weight', guides=['weight'], perturbation_moves=30,
+def guided_local_search(G, init_tour, init_cost, t_lim, weight='weight', guides=['weight'], perturbation_moves=30, test=False,
                         first_improvement=False):
     k = 0.1 * init_cost / len(G.nodes)
     nx.set_edge_attributes(G, 0, 'penalty')
@@ -186,11 +186,14 @@ def guided_local_search(G, init_tour, init_cost, t_lim, weight='weight', guides=
                         moves += moved
 
         # optimisation
-        cur_tour, cur_cost, new_search_progress = local_search(cur_tour, cur_cost, edge_weight, first_improvement)
-        search_progress += new_search_progress
-        if cur_cost < best_cost:
-            best_tour, best_cost = cur_tour, cur_cost
-
-        iter_i += 1
+        result_tour, result_cost = local_search(cur_tour, cur_cost, edge_weight, first_improvement)
+        if test == True:
+            if result_cost < best_cost:
+                best_tour, best_cost = result_tour, result_cost
+            loc = np.random.randint(0, G.number_of_nodes())            
+            cur_tour = nearest_neighbor(G, loc, 'weight')
+            cur_cost = tour_cost(G, cur_tour, 'weight')
+        else:
+                cur_tour, cur_cost = result_tour, result_cost
 
     return best_tour, best_cost, search_progress
