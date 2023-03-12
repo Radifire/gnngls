@@ -192,7 +192,7 @@ def guided_local_search(G, init_tour, init_cost, t_lim, weight='weight', guides=
             if result_cost < best_cost:
                 best_tour, best_cost = result_tour, result_cost
             loc = np.random.randint(0, G.number_of_nodes())            
-            cur_tour = nearest_neighbor(G, loc, 'weight')
+            cur_tour = nearest_neighbor(G, loc, 'regret_pred')
             cur_cost = tour_cost(G, cur_tour, 'weight')
             nx.set_edge_attributes(G, 0, 'penalty')
         else:
